@@ -5,3 +5,5 @@ node_modules
 firebaseServiceAccount.json
 
 *.local.ts
+
+dist

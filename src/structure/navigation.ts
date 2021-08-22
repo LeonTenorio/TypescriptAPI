@@ -16,12 +16,12 @@ export default class Navigation {
     session: ClientSession
   ): Promise<
     | {
-        sucess: true;
+        success: true;
         status: number;
         body: any;
       }
     | {
-        sucess: false;
+        success: false;
         error: Error;
       }
   > {
@@ -30,12 +30,12 @@ export default class Navigation {
       try {
         const result = await handler.run(context, session);
         if (result !== null) {
-          return { ...result, sucess: true };
+          return { ...result, success: true };
         }
       } catch (e) {
-        return { error: e, sucess: false };
+        return { error: e, success: false };
       }
     }
-    return { error: Error("Handlers without response"), sucess: false };
+    return { error: Error("Handlers without response"), success: false };
   }
 }

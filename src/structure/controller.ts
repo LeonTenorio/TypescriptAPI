@@ -9,7 +9,7 @@ export default class Controller {
     const session: ClientSession = await mongoose.connection.startSession();
     session.startTransaction();
     const handlersResponse = await navigation.navigate(context, session);
-    if (handlersResponse.sucess) {
+    if (handlersResponse.success) {
       if (handlersResponse.status < 400) {
         await session.commitTransaction();
       } else {
