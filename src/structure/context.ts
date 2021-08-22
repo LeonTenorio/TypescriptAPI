@@ -5,11 +5,11 @@ type Method = "GET" | "POST" | "PATCH" | "PUT" | "DELETE";
 export default class Context {
   hostname: string;
   url: string;
-  body: object;
+  body: Record<string, any>;
   method: Method;
   params: object;
 
-  _variables: any;
+  _variables: { [key: string]: any };
 
   constructor(req: Request) {
     this.hostname = req.hostname;
@@ -20,13 +20,14 @@ export default class Context {
       throw Error("Invalid http method");
     this.params = { ...req.params, ...req.query };
     this._variables = new Object();
+    console.log(this);
   }
 
-  setVariable(key: string, variable: any) {
+  setVariable<T>(key: string, variable: T) {
     this._variables[key] = variable;
   }
 
-  getVariable(key: string): any {
-    return this._variables[key];
+  getVariable<T>(key: string): T {
+    return this._variables[key] as T;
   }
 }
