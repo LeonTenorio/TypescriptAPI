@@ -40,7 +40,7 @@ export const addDymmyData = async (
   } catch (e) {
     return {
       success: false,
-      error: e,
+      error: e as Error,
     };
   }
 };
@@ -58,7 +58,7 @@ export const readDummyDatas = async (
   } catch (e) {
     return {
       success: false,
-      error: e,
+      error: e as Error,
     };
   }
 };
@@ -84,7 +84,7 @@ export const updateDummyData = async (
   } catch (e) {
     return {
       success: false,
-      error: e,
+      error: e as Error,
     };
   }
 };

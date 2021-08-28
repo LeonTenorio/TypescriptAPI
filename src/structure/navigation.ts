@@ -44,7 +44,8 @@ export default class Navigation {
         }
       }
     } catch (e) {
-      return { error: e, success: false };
+      // TODO: Check that type cast
+      return { error: e as Error, success: false };
     }
     return { error: Error("Handlers without response"), success: false };
   }

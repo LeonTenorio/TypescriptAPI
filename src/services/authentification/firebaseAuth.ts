@@ -59,7 +59,7 @@ export const signInWithEmailAndPassword = async (
   } catch (e) {
     return {
       success: false,
-      error: e,
+      error: e as Error,
     };
   }
 };
@@ -87,7 +87,7 @@ export const createAuthAccount = async (
   } catch (e) {
     return {
       success: false,
-      error: e,
+      error: e as Error,
     };
   }
 };
@@ -109,7 +109,7 @@ export const checkLoginToken = async (
   } catch (e) {
     return {
       success: false,
-      error: e,
+      error: e as Error,
     };
   }
 };
