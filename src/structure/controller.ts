@@ -18,8 +18,8 @@ export default class Controller {
       session.endSession();
       res.status(handlersResponse.status).send(handlersResponse.body);
     } else {
-      console.log("ERROR");
-      console.log(handlersResponse.error);
+      console.warn("ERROR");
+      console.warn(handlersResponse.error.message);
       await session.abortTransaction();
       res.status(500).send({});
     }
