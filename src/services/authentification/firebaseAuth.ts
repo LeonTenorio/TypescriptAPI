@@ -94,7 +94,7 @@ export const createAuthAccount = async (
 
 export const checkLoginToken = async (
   token: string
-): Promise<DatabaseResult<{ userId: string }>> => {
+): Promise<DatabaseResult<{ userId: string; user: firebase.User }>> => {
   const { auth } = getFirebaseReference();
   try {
     const authResponse = await auth.signInWithCustomToken(token);
@@ -104,6 +104,7 @@ export const checkLoginToken = async (
       success: true,
       data: {
         userId: authResponse.user.uid,
+        user: authResponse.user,
       },
     };
   } catch (e) {
@@ -112,4 +113,78 @@ export const checkLoginToken = async (
       error: e as Error,
     };
   }
+};
+
+export const updateEmailAndPassword = async (
+  token: string,
+  email: string,
+  password: string
+): Promise<DatabaseResult<null>> => {
+  const userResult = await checkLoginToken(token);
+  if (!userResult.success) {
+    return userResult;
+  }
+  try {
+    const user = userResult.data.user;
+    if (user.email !== email) {
+      await user.updateEmail(email);
+    }
+    await user.updatePassword(password);
+  } catch (e) {
+    return {
+      success: false,
+      error: e as Error,
+    };
+  }
+
+  return {
+    success: true,
+    data: null,
+  };
+};
+
+export const signOutAllAcounts = async (
+  token: string
+): Promise<DatabaseResult<null>> => {
+  const userResult = await checkLoginToken(token);
+  if (!userResult.success) {
+    return userResult;
+  }
+  const { adminAuth } = getFirebaseReference();
+  try {
+    await adminAuth.revokeRefreshTokens(userResult.data.userId);
+  } catch (e) {
+    return {
+      success: false,
+      error: e as Error,
+    };
+  }
+
+  return {
+    success: true,
+    data: null,
+  };
+};
+
+export const deleteAccount = async (
+  token: string
+): Promise<DatabaseResult<null>> => {
+  const userResult = await checkLoginToken(token);
+  if (!userResult.success) {
+    return userResult;
+  }
+  const { adminAuth } = getFirebaseReference();
+  try {
+    await adminAuth.deleteUser(userResult.data.userId);
+  } catch (e) {
+    return {
+      success: false,
+      error: e as Error,
+    };
+  }
+
+  return {
+    success: true,
+    data: null,
+  };
 };
