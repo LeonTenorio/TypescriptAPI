@@ -1,9 +1,9 @@
-import { Express, Request, Response } from "express";
-import { ClientSession } from "mongoose";
-import Context from "./context";
-import { DatabaseResult } from "./databaseResult";
-import Handler from "./handler";
-import { NavigationResult } from "./response";
+import { Express, Request, Response } from 'express';
+import { ClientSession } from 'mongoose';
+import Context from './context';
+import { DatabaseResult } from './databaseResult';
+import Handler from './handler';
+import { NavigationResult } from './response';
 
 export default class Navigation {
   handlers: Array<Handler<any>>;
@@ -47,7 +47,7 @@ export default class Navigation {
       // TODO: Check that type cast
       return { error: e as Error, success: false };
     }
-    return { error: Error("Handlers without response"), success: false };
+    return { error: Error('Handlers without response'), success: false };
   }
 }
 
@@ -70,7 +70,7 @@ export const ProtectedNavigation = <T>(
           return {
             status: 401,
             body: {
-              error: "REQUEST_WITHOUT_TOKEN",
+              error: 'REQUEST_WITHOUT_TOKEN',
             },
           };
         const profileResult = await getProfile(authToken, session);
@@ -81,7 +81,7 @@ export const ProtectedNavigation = <T>(
           return {
             status: 404,
             body: {
-              error: "PROFILE_NOT_FOUND",
+              error: 'PROFILE_NOT_FOUND',
             },
           };
         }
@@ -90,12 +90,12 @@ export const ProtectedNavigation = <T>(
             return {
               status: 403,
               body: {
-                error: "NOT_AUTHORIZED",
+                error: 'NOT_AUTHORIZED',
               },
             };
           }
         }
-        context.setVariable<T>("profile", profileResult.data);
+        context.setVariable<T>('profile', profileResult.data);
 
         return null;
       }

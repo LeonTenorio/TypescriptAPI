@@ -1,7 +1,7 @@
-import { ClientSession, model, Schema, Document, Model } from "mongoose";
-import { DatabaseResult } from "../../structure/databaseResult";
+import { ClientSession, model, Schema, Document, Model } from 'mongoose';
+import { DatabaseResult } from '../../structure/databaseResult';
 
-const collection: string = "Dummy";
+const collection: string = 'Dummy';
 
 const DummySchema = new Schema({
   message: String,

@@ -1,19 +1,19 @@
-import { ClientSession } from "mongoose";
+import { ClientSession } from 'mongoose';
 import {
   addDymmyData,
   readDummyDatas,
   updateDummyData,
-} from "../../services/data/dummyService";
-import Context from "../../structure/context";
-import Handler from "../../structure/handler";
-import { NavigationResult } from "../../structure/response";
+} from '../../services/data/dummyService';
+import Context from '../../structure/context';
+import Handler from '../../structure/handler';
+import { NavigationResult } from '../../structure/response';
 
 export const dummyGetHandler = new Handler(
   async (
     context: Context,
     session: ClientSession
   ): Promise<NavigationResult<{ message: string; data: Array<any> }>> => {
-    const data = { message: "test", time: new Date() };
+    const data = { message: 'test', time: new Date() };
     const addResult = await addDymmyData(data, session);
     if (!addResult.success) {
       throw addResult.error;
@@ -26,7 +26,7 @@ export const dummyGetHandler = new Handler(
 
     const updateResult = await updateDummyData(
       data.time,
-      { message: "updated" },
+      { message: 'updated' },
       session
     );
     if (!updateResult.success) {
@@ -35,7 +35,7 @@ export const dummyGetHandler = new Handler(
 
     return {
       status: 200,
-      body: { message: "Success", data: readResult.data },
+      body: { message: 'Success', data: readResult.data },
     };
   }
 );

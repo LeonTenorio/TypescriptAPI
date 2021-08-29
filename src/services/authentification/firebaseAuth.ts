@@ -1,8 +1,8 @@
-import firebase from "firebase";
-import * as admin from "firebase-admin";
-import { DatabaseResult } from "../../structure/databaseResult";
+import firebase from 'firebase';
+import * as admin from 'firebase-admin';
+import { DatabaseResult } from '../../structure/databaseResult';
 
-const serviceAccount = require("../../../firebaseServiceAccount.json");
+const serviceAccount = require('../../../firebaseServiceAccount.json');
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
@@ -47,7 +47,7 @@ export const signInWithEmailAndPassword = async (
   const { auth, adminAuth } = getFirebaseReference();
   try {
     const authResponse = await auth.signInWithEmailAndPassword(email, password);
-    if (authResponse.user === null) throw Error("Null firebase user id");
+    if (authResponse.user === null) throw Error('Null firebase user id');
     const customToken = await adminAuth.createCustomToken(email);
     return {
       success: true,
@@ -75,7 +75,7 @@ export const createAuthAccount = async (
       password
     );
 
-    if (authResponse.user === null) throw Error("Null firebase user id");
+    if (authResponse.user === null) throw Error('Null firebase user id');
     const customToken = await adminAuth.createCustomToken(email);
     return {
       success: true,
@@ -99,7 +99,7 @@ export const checkLoginToken = async (
   try {
     const authResponse = await auth.signInWithCustomToken(token);
 
-    if (authResponse.user === null) throw Error("Null firebase user id");
+    if (authResponse.user === null) throw Error('Null firebase user id');
     return {
       success: true,
       data: {

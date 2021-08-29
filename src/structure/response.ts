@@ -1,4 +1,4 @@
-import { Express, Request, Response } from "express";
+import { Express, Request, Response } from 'express';
 
 export type NavigationResult<T> =
   | {

@@ -1,7 +1,7 @@
-import { Express, Request, Response } from "express";
-import Context from "./context";
-import Navigation from "./navigation";
-import mongoose, { ClientSession } from "mongoose";
+import { Express, Request, Response } from 'express';
+import Context from './context';
+import Navigation from './navigation';
+import mongoose, { ClientSession } from 'mongoose';
 
 export default class Controller {
   async runNavigation(navigation: Navigation, req: Request, res: Response) {
@@ -18,7 +18,7 @@ export default class Controller {
       session.endSession();
       res.status(handlersResponse.status).send(handlersResponse.body);
     } else {
-      console.warn("ERROR");
+      console.warn('ERROR');
       console.warn(handlersResponse.error.message);
       await session.abortTransaction();
       res.status(500).send({});
