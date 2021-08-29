@@ -31,7 +31,7 @@ export const signInHandler = <T>(
       const authResult = await signInWithEmailAndPassword(email, password);
       if (!authResult.success) {
         return {
-          status: 403,
+          status: 401,
           body: { error: 'INVALID_EMAIL_OR_PASSWORD' },
         };
       }

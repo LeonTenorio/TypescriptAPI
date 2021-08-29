@@ -24,7 +24,7 @@ export const signUpHandler = new Handler(
     const registerResult = await createAuthAccount(email, password);
     if (!registerResult.success) {
       return {
-        status: 400,
+        status: 406,
         body: {
           error: 'CANT_REGISTER_THAT_PROFILE',
         },

@@ -6,7 +6,33 @@ export type NavigationResult<T> =
       body: T;
     }
   | {
-      status: 400 | 401 | 402 | 403 | 404 | 405;
-      body: { error: string };
+      status: 400;
+      body: {
+        error: string;
+      };
+    }
+  | {
+      status: 401;
+      body: {
+        error: 'INVALID_EMAIL_OR_PASSWORD' | 'REQUEST_WITHOUT_TOKEN';
+      };
+    }
+  | {
+      status: 403;
+      body: {
+        error: 'NOT_AUTHORIZED';
+      };
+    }
+  | {
+      status: 404;
+      body: {
+        error: 'PROFILE_NOT_FOUND';
+      };
+    }
+  | {
+      status: 406;
+      body: {
+        error: 'CANT_REGISTER_THAT_PROFILE';
+      };
     }
   | null;
