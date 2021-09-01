@@ -21,7 +21,9 @@ test('create an account + check login token + delete account', async () => {
   const checkLoginTokenResult = await checkLoginToken(
     createAccountResult.data.token
   );
-  expect(checkLoginTokenResult.success).toBe(true);
+  expect(
+    checkLoginTokenResult.success && checkLoginTokenResult.data.email === email
+  ).toBe(true);
 
   const deleteAccountResult = await deleteAccount(
     createAccountResult.data.token
@@ -29,7 +31,7 @@ test('create an account + check login token + delete account', async () => {
   expect(deleteAccountResult.success).toBe(true);
 });
 
-test('create an account + revoke token + signIn + delete account', async () => {
+test('create an account + revoke token + check token + signIn + delete account', async () => {
   const email = 'test@test.com';
   const password = 'testtest';
 
@@ -49,7 +51,11 @@ test('create an account + revoke token + signIn + delete account', async () => {
   expect(checkLoginTokenResult.success).toBe(false);
 
   const signInResult = await signInWithEmailAndPassword(email, password);
-  expect(signInResult.success).toBe(true);
+  expect(
+    signInResult.success &&
+      signInResult.data.userId === createAccountResult.data.userId &&
+      signInResult.data.token !== createAccountResult.data.token
+  ).toBe(true);
   if (!signInResult.success) throw signInResult.error;
 
   const deleteAccountResult = await deleteAccount(signInResult.data.token);
