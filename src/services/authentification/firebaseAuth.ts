@@ -94,17 +94,21 @@ export const createAuthAccount = async (
 
 export const checkLoginToken = async (
   token: string
-): Promise<DatabaseResult<{ userId: string; user: firebase.User }>> => {
-  const { auth } = getFirebaseReference();
+): Promise<
+  DatabaseResult<{ userId: string; email: string; user: firebase.User }>
+> => {
+  const { auth, adminAuth } = getFirebaseReference();
   try {
     const authResponse = await auth.signInWithCustomToken(token);
 
     if (authResponse.user === null) throw Error('Null firebase user id');
+    const authUser = await adminAuth.getUserByEmail(authResponse.user.uid);
     return {
       success: true,
       data: {
-        userId: authResponse.user.uid,
+        userId: authUser.uid,
         user: authResponse.user,
+        email: authResponse.user.uid,
       },
     };
   } catch (e) {
@@ -170,12 +174,18 @@ export const deleteAccount = async (
   token: string
 ): Promise<DatabaseResult<null>> => {
   const userResult = await checkLoginToken(token);
+
   if (!userResult.success) {
     return userResult;
   }
   const { adminAuth } = getFirebaseReference();
+  const { email, userId } = userResult.data;
   try {
-    await adminAuth.deleteUser(userResult.data.userId);
+    // Here we have something very peculiar in firebase auth
+    // For user that was created using email, we need to remove the userId account and the email acount
+    // of the firebase auth
+    await adminAuth.deleteUser(userId);
+    await adminAuth.deleteUser(email);
   } catch (e) {
     return {
       success: false,
