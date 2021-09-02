@@ -145,36 +145,29 @@ export const updateEmailAndPassword = async (
   token: string,
   email: string,
   password: string
-): Promise<DatabaseResult<null>> => {
+): Promise<DatabaseResult<{ token: string; userId: string }>> => {
+  const { adminAuth } = getFirebaseReference();
   const userResult = await checkLoginToken(token);
   if (!userResult.success) {
     return userResult;
   }
   try {
-    // const user = userResult.data.user;
-    // if (user.email !== email) {
-    //   await user.updateEmail(email);
-    // }
-    // await user.updatePassword(password);
+    await adminAuth.updateUser(userResult.data.userId, {
+      email: email,
+      password: password,
+    });
+    return await signInWithEmailAndPassword(email, password);
   } catch (e) {
     return {
       success: false,
       error: e as Error,
     };
   }
-
-  return {
-    success: true,
-    data: null,
-  };
 };
 
 export const deleteAccount = async (
   token: string
 ): Promise<DatabaseResult<null>> => {
-  // const signOutResult = await signOutAllAcounts(token);
-  // if (!signOutResult.success) return signOutResult;
-
   const userResult = await checkLoginToken(token);
 
   if (!userResult.success) {
@@ -183,11 +176,7 @@ export const deleteAccount = async (
   const { adminAuth } = getFirebaseReference();
   const { userId } = userResult.data;
   try {
-    // Here we have something very peculiar in firebase auth
-    // For user that was created using email, we need to remove the userId account and the email acount
-    // of the firebase auth
     await adminAuth.deleteUser(userId);
-    // await adminAuth.deleteUser(email);
   } catch (e) {
     return {
       success: false,
