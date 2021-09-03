@@ -20,9 +20,7 @@ The Firebase has been used to implement the login service and we have that funct
 The MONGODB configuration and a piece of Firebase configuration is inside the `.env` file in that schema:
 
 ```
-MONGODB_USER='Mongo db user'
-MONGODB_PASSWORD='Mongo db password'
-MONGODB_DATABASE='Mongo db database'
+MONGODB_URL='Mongo DB Url'
 
 FIREBASE_API_KEY='Firebase api key'
 FIREBASE_AUTH_DOMAIN='Firebase auth domain'
