@@ -1,5 +1,6 @@
 import { Express, Request, Response } from 'express';
 import { ClientSession } from 'mongoose';
+import { checkLoginToken } from '../services/authentification/firebaseAuth';
 import Context from './context';
 import { DatabaseResult } from './databaseResult';
 import Handler from './handler';
@@ -54,7 +55,8 @@ export default class Navigation {
 export const ProtectedNavigation = <T>(
   handlers: Array<Handler<any>>,
   getProfile: (
-    token: string,
+    userId: string,
+    email: string,
     session: ClientSession
   ) => Promise<DatabaseResult<T | null>>,
   roleFunction?: (profile: T) => boolean
@@ -73,7 +75,20 @@ export const ProtectedNavigation = <T>(
               error: 'REQUEST_WITHOUT_TOKEN',
             },
           };
-        const profileResult = await getProfile(authToken, session);
+        const authResult = await checkLoginToken(authToken);
+        if (!authResult.success) {
+          return {
+            status: 401,
+            body: {
+              error: 'INVALID_TOKEN',
+            },
+          };
+        }
+        const profileResult = await getProfile(
+          authResult.data.userId,
+          authResult.data.email,
+          session
+        );
         if (!profileResult.success) {
           throw profileResult.error;
         }

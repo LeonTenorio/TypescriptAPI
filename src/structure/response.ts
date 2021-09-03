@@ -14,7 +14,10 @@ export type NavigationResult<T> =
   | {
       status: 401;
       body: {
-        error: 'INVALID_EMAIL_OR_PASSWORD' | 'REQUEST_WITHOUT_TOKEN';
+        error:
+          | 'INVALID_EMAIL_OR_PASSWORD'
+          | 'REQUEST_WITHOUT_TOKEN'
+          | 'INVALID_TOKEN';
       };
     }
   | {
