@@ -115,8 +115,8 @@ test('create an account + update email and password + signIn + delete', async ()
       signInResult.data.userId === updateEmailAndPasswordResult.data.userId
   ).toBe(true);
 
-  const deleteAccountResult = await deleteAccount(
-    updateEmailAndPasswordResult.data.token
-  );
+  if (!signInResult.success) throw signInResult.error;
+
+  const deleteAccountResult = await deleteAccount(signInResult.data.token);
   expect(deleteAccountResult.success).toBe(true);
 });
