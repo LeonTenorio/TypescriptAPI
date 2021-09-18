@@ -2,6 +2,7 @@ import firebase from 'firebase';
 import * as admin from 'firebase-admin';
 import { DatabaseResult } from '../../../structure/databaseResult';
 
+//TODO: Create the firebaseServiceAccount for the beta env
 const serviceAccount = require('../../../../firebaseServiceAccount.json');
 
 const firebaseConfig = {
