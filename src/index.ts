@@ -17,10 +17,22 @@ program.parse(process.argv);
 const options = program.opts();
 
 if (options.prod) {
+  /**
+   * The production environment using the production firebase
+   * configuration and the production mongodb database
+   */
   dotenv.config({ path: '.env.prod' });
 } else if (options.beta) {
+  /**
+   * The beta environment using the beta firebase configuration
+   * and the beta mongodb database
+   */
   dotenv.config({ path: '.env.beta' });
 } else {
+  /**
+   * The local environment using the local firebase emulation and
+   * the local mongodb database
+   */
   dotenv.config({ path: '.env' });
 }
 
