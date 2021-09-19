@@ -3,7 +3,10 @@ import * as admin from 'firebase-admin';
 import { DatabaseResult } from '../../../structure/databaseResult';
 
 //TODO: Create the firebaseServiceAccount for the beta env
-const serviceAccount = require('../../../../firebaseServiceAccount.json');
+const serviceAccount =
+  process.env.ENV === 'PROD'
+    ? require('../../../../prod.firebaseServiceAccount.json')
+    : require('../../../../beta.firebaseServiceAccount.json');
 
 const firebaseConfig = {
   apiKey: process.env.FIREBASE_API_KEY,
