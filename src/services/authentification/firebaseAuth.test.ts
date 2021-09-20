@@ -1,4 +1,4 @@
-require('dotenv').config();
+import initEnv from '../../initEnv';
 
 import {
   checkLoginToken,
@@ -8,6 +8,9 @@ import {
   signOutAllAcounts,
   updateEmailAndPassword,
 } from './firebaseAuth';
+
+initEnv();
+
 jest.setTimeout(100000);
 
 test('create an account + check login token + delete account', async () => {
