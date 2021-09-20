@@ -40,3 +40,10 @@ FIREBASE_MEASUREMENT_ID='Firebase measurement id'
 ```
 
 The `beta.firebaseServiceAccount.json` or `prod.firebaseServiceAccount.json` is the firebase admin sdk service account and you can download that configuration file in your project accessing the configurations -> service account -> firebase sdk admin -> generate private key for node.js.
+
+To use the local mongodb you need to install the mongodb-server client, to do it you can use that pages:
+
+- [Ubuntu MongoDB usage](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
+- [Fedora MongoDB usage](https://tecadmin.net/install-mongodb-on-fedora/)
+- [Windows MongoDB usage](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
+- [MacOS MongoDB usage](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
