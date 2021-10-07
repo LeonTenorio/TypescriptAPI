@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 import {
   checkLoginToken,
   createAuthAccount,
@@ -8,6 +6,7 @@ import {
   signOutAllAcounts,
   updateEmailAndPassword,
 } from './firebaseAuth';
+
 jest.setTimeout(100000);
 
 test('create an account + check login token + delete account', async () => {
@@ -115,8 +114,8 @@ test('create an account + update email and password + signIn + delete', async ()
       signInResult.data.userId === updateEmailAndPasswordResult.data.userId
   ).toBe(true);
 
-  const deleteAccountResult = await deleteAccount(
-    updateEmailAndPasswordResult.data.token
-  );
+  if (!signInResult.success) throw signInResult.error;
+
+  const deleteAccountResult = await deleteAccount(signInResult.data.token);
   expect(deleteAccountResult.success).toBe(true);
 });

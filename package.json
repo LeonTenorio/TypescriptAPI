@@ -27,14 +27,19 @@
   "dependencies": {
     "@firebase/firestore-types": "^2.3.0",
     "@types/express": "^4.17.12",
+    "@types/jsonwebtoken": "^8.5.5",
     "@types/mongoose": "^5.11.97",
+    "@types/uuid": "^8.3.1",
     "ajv": "^8.6.2",
     "body-parser": "^1.19.0",
+    "commander": "^8.2.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "firebase": "^8.7.1",
     "firebase-admin": "^9.10.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.13.0",
-    "ts-node-dev": "^1.1.6"
+    "ts-node-dev": "^1.1.6",
+    "uuid": "^8.3.2"
   }
 }
