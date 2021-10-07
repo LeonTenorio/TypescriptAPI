@@ -1,7 +1,8 @@
 import { connect } from 'mongoose';
+import environmentVariables from './environmentVariables';
 
 export async function connectDatabase() {
-  const mongoUrl: string = process.env.MONGODB_URL as string;
+  const mongoUrl: string = environmentVariables().MONGODB_URL;
   await connect(mongoUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,

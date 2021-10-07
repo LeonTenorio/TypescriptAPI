@@ -2,6 +2,7 @@ import { DatabaseResult } from '../../../structure/databaseResult';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 import { v4 as uuid } from 'uuid';
+import environmentVariables from '../../../config/environmentVariables';
 
 const localUsersFile = './.localAuth.json';
 
@@ -44,6 +45,9 @@ const createAuthAccount = async (
   password: string
 ): Promise<DatabaseResult<{ token: string; userId: string }>> => {
   try {
+    const env = environmentVariables();
+    if (env.ENV !== 'LOCAL') throw Error('Wrong usage of local firebase auth');
+
     if (email.length < 1 || password.length < 1)
       return { success: false, error: Error('Invalid password or email') };
 
@@ -60,10 +64,7 @@ const createAuthAccount = async (
     }
 
     const userId: string = uuid();
-    const token: string = jwt.sign(
-      { data: uuid() },
-      process.env.JWT_SECRET as string
-    );
+    const token: string = jwt.sign({ data: uuid() }, env.JWT_SECRET);
 
     const user: User = {
       email: email,
@@ -173,6 +174,9 @@ const signInWithEmailAndPassword = async (
   password: string
 ): Promise<DatabaseResult<{ token: string; userId: string }>> => {
   try {
+    const env = environmentVariables();
+    if (env.ENV !== 'LOCAL') throw Error('Wrong usage of local firebase auth');
+
     if (email.length < 1 || password.length < 1)
       return { success: false, error: Error('Invalid password or email') };
 
@@ -191,10 +195,7 @@ const signInWithEmailAndPassword = async (
       };
     }
 
-    const token: string = jwt.sign(
-      { data: uuid() },
-      process.env.JWT_SECRET as string
-    );
+    const token: string = jwt.sign({ data: uuid() }, env.JWT_SECRET);
 
     const index = users.indexOf(user, 0);
 
@@ -226,6 +227,9 @@ const updateEmailAndPassword = async (
   password: string
 ): Promise<DatabaseResult<{ token: string; userId: string }>> => {
   try {
+    const env = environmentVariables();
+    if (env.ENV !== 'LOCAL') throw Error('Wrong usage of local firebase auth');
+
     if (email.length < 1 || password.length < 1)
       return { success: false, error: Error('Invalid password or email') };
 
@@ -244,10 +248,7 @@ const updateEmailAndPassword = async (
       };
     }
 
-    const newToken: string = jwt.sign(
-      { data: uuid() },
-      process.env.JWT_SECRET as string
-    );
+    const newToken: string = jwt.sign({ data: uuid() }, env.JWT_SECRET);
 
     const index = users.indexOf(user, 0);
 

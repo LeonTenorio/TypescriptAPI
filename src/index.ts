@@ -3,9 +3,6 @@ import { json } from 'body-parser';
 import { connectDatabase } from './config/database';
 import { router as dummyRouter } from './router/dummy';
 import { router as authRouter } from './router/auth';
-import initEnv from './initEnv';
-
-initEnv();
 
 const app = express();
 app.use(json({ limit: '50mb' }));

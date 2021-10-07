@@ -1,5 +1,3 @@
-import initEnv from '../../initEnv';
-
 import {
   checkLoginToken,
   createAuthAccount,
@@ -8,8 +6,6 @@ import {
   signOutAllAcounts,
   updateEmailAndPassword,
 } from './firebaseAuth';
-
-initEnv();
 
 jest.setTimeout(100000);
 
