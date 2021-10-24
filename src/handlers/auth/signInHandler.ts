@@ -2,7 +2,7 @@ import { ClientSession } from 'mongoose';
 import { signInWithEmailAndPassword } from '../../services/authentification/firebaseAuth';
 import Context from '../../structure/context';
 import Handler from '../../structure/handler';
-import { NavigationResult } from '../../structure/response';
+import { NavigationResult } from '../../structure/navigation';
 import { LoginValidator } from '../../schemas/login';
 import { DatabaseResult } from '../../structure/databaseResult';
 
@@ -19,9 +19,12 @@ export const signInHandler = <T>(
     ): Promise<NavigationResult<{ authToken: string; profile: T }>> => {
       if (!LoginValidator(context.body as object)) {
         return {
-          status: 400,
-          body: {
-            error: JSON.stringify(LoginValidator.errors),
+          databaseSuccess: false,
+          result: {
+            status: 400,
+            body: {
+              error: JSON.stringify(LoginValidator.errors),
+            },
           },
         };
       }
@@ -31,8 +34,11 @@ export const signInHandler = <T>(
       const authResult = await signInWithEmailAndPassword(email, password);
       if (!authResult.success) {
         return {
-          status: 401,
-          body: { error: 'INVALID_EMAIL_OR_PASSWORD' },
+          databaseSuccess: false,
+          result: {
+            status: 401,
+            body: { error: 'INVALID_EMAIL_OR_PASSWORD' },
+          },
         };
       }
 
@@ -42,16 +48,22 @@ export const signInHandler = <T>(
       }
       if (profileResult.data === null) {
         return {
-          status: 404,
-          body: { error: 'PROFILE_NOT_FOUND' },
+          databaseSuccess: false,
+          result: {
+            status: 404,
+            body: { error: 'PROFILE_NOT_FOUND' },
+          },
         };
       }
 
       return {
-        status: 200,
-        body: {
-          authToken: authResult.data.token,
-          profile: profileResult.data,
+        databaseSuccess: true,
+        result: {
+          status: 200,
+          body: {
+            authToken: authResult.data.token,
+            profile: profileResult.data,
+          },
         },
       };
     }

@@ -2,7 +2,7 @@ import { ClientSession } from 'mongoose';
 import { createAuthAccount } from '../../services/authentification/firebaseAuth';
 import Context from '../../structure/context';
 import Handler from '../../structure/handler';
-import { NavigationResult } from '../../structure/response';
+import { NavigationResult } from '../../structure/navigation';
 import { LoginValidator } from '../../schemas/login';
 
 export const signUpHandler = new Handler(
@@ -12,9 +12,12 @@ export const signUpHandler = new Handler(
   ): Promise<NavigationResult<{ authToken: string }>> => {
     if (!LoginValidator(context.body as object)) {
       return {
-        status: 400,
-        body: {
-          error: JSON.stringify(LoginValidator.errors),
+        databaseSuccess: false,
+        result: {
+          status: 400,
+          body: {
+            error: JSON.stringify(LoginValidator.errors),
+          },
         },
       };
     }
@@ -24,16 +27,22 @@ export const signUpHandler = new Handler(
     const registerResult = await createAuthAccount(email, password);
     if (!registerResult.success) {
       return {
-        status: 406,
-        body: {
-          error: 'CANT_REGISTER_THAT_PROFILE',
+        databaseSuccess: false,
+        result: {
+          status: 406,
+          body: {
+            error: 'CANT_REGISTER_THAT_PROFILE',
+          },
         },
       };
     }
     return {
-      status: 200,
-      body: {
-        authToken: registerResult.data.token,
+      databaseSuccess: true,
+      result: {
+        status: 200,
+        body: {
+          authToken: registerResult.data.token,
+        },
       },
     };
   }

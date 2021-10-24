@@ -1,6 +1,6 @@
 import { Express, Request, Response } from 'express';
 
-export type NavigationResult<T> =
+export type OperationResult<T> =
   | {
       status: 200 | 201 | 202 | 203 | 204 | 205;
       body: T;

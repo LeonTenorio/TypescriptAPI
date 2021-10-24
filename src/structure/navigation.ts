@@ -1,24 +1,24 @@
 import { Express, Request, Response } from 'express';
-import { ClientSession } from 'mongoose';
+import mongoose, { ClientSession } from 'mongoose';
 import { checkLoginToken } from '../services/authentification/firebaseAuth';
 import Context from './context';
 import { DatabaseResult } from './databaseResult';
 import Handler from './handler';
-import { NavigationResult } from './response';
+import { OperationResult } from './response';
+
+export type NavigationResult<T> = {
+  databaseSuccess: boolean;
+  result: OperationResult<T>;
+};
 
 export default class Navigation {
   handlers: Array<Handler<any>>;
-  authHandler?: Handler<any>;
 
-  constructor(handlers: Array<Handler<any>>, authHandler?: Handler<any>) {
+  constructor(handlers: Array<Handler<any>>) {
     this.handlers = handlers;
-    this.authHandler = authHandler;
   }
 
-  async navigate(
-    context: Context,
-    session: ClientSession
-  ): Promise<
+  async navigate(context: Context): Promise<
     | {
         success: true;
         status: number;
@@ -29,25 +29,34 @@ export default class Navigation {
         error: Error;
       }
   > {
-    try {
-      if (this.authHandler !== undefined) {
-        const handler: Handler<any> = this.authHandler;
-        const result = await handler.run(context, session);
-        if (result !== null) {
-          return { ...result, success: true };
-        }
-      }
-      for (let i = 0; i < this.handlers.length; i++) {
+    for (let i = 0; i < this.handlers.length; i++) {
+      const session: ClientSession = await mongoose.connection.startSession();
+      session.startTransaction();
+
+      try {
         const handler: Handler<any> = this.handlers[i];
         const result = await handler.run(context, session);
-        if (result !== null) {
-          return { ...result, success: true };
+
+        if (result.databaseSuccess) {
+          await session.commitTransaction();
+        } else {
+          await session.abortTransaction();
         }
+        session.endSession();
+
+        if (result.result !== null) {
+          return { ...result.result, success: true };
+        }
+      } catch (e) {
+        await session.abortTransaction();
+        session.endSession();
+        return {
+          success: false,
+          error: e as Error,
+        };
       }
-    } catch (e) {
-      // TODO: Check that type cast
-      return { error: e as Error, success: false };
     }
+
     return { error: Error('Handlers without response'), success: false };
   }
 }
@@ -70,17 +79,23 @@ export const ProtectedNavigation = <T>(
         const authToken = context.getAuthToken();
         if (authToken === null)
           return {
-            status: 401,
-            body: {
-              error: 'REQUEST_WITHOUT_TOKEN',
+            databaseSuccess: false,
+            result: {
+              status: 401,
+              body: {
+                error: 'REQUEST_WITHOUT_TOKEN',
+              },
             },
           };
         const authResult = await checkLoginToken(authToken);
         if (!authResult.success) {
           return {
-            status: 401,
-            body: {
-              error: 'INVALID_TOKEN',
+            databaseSuccess: false,
+            result: {
+              status: 401,
+              body: {
+                error: 'INVALID_TOKEN',
+              },
             },
           };
         }
@@ -94,25 +109,34 @@ export const ProtectedNavigation = <T>(
         }
         if (profileResult.data === null) {
           return {
-            status: 404,
-            body: {
-              error: 'PROFILE_NOT_FOUND',
+            databaseSuccess: false,
+            result: {
+              status: 404,
+              body: {
+                error: 'PROFILE_NOT_FOUND',
+              },
             },
           };
         }
         if (roleFunction !== undefined) {
           if (!roleFunction(profileResult.data)) {
             return {
-              status: 403,
-              body: {
-                error: 'NOT_AUTHORIZED',
+              databaseSuccess: false,
+              result: {
+                status: 403,
+                body: {
+                  error: 'NOT_AUTHORIZED',
+                },
               },
             };
           }
         }
         context.setVariable<T>('profile', profileResult.data);
 
-        return null;
+        return {
+          databaseSuccess: true,
+          result: null,
+        };
       }
     ),
     ...handlers,

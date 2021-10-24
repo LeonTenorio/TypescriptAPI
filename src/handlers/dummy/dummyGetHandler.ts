@@ -6,7 +6,7 @@ import {
 } from '../../services/data/dummyService';
 import Context from '../../structure/context';
 import Handler from '../../structure/handler';
-import { NavigationResult } from '../../structure/response';
+import { NavigationResult } from '../../structure/navigation';
 
 export const dummyGetHandler = new Handler(
   async (
@@ -34,8 +34,11 @@ export const dummyGetHandler = new Handler(
     }
 
     return {
-      status: 200,
-      body: { message: 'Success', data: readResult.data },
+      databaseSuccess: true,
+      result: {
+        status: 200,
+        body: { message: 'Success', data: readResult.data },
+      },
     };
   }
 );
