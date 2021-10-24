@@ -9,11 +9,11 @@ import {
 
 jest.setTimeout(100000);
 
-test('create an account + check login token + delete account', async () => {
-  const email = 'test@test.com';
-  const password = 'testtest';
+const testEmail = 'test@test.com';
+const testPassword = 'testtest';
 
-  const createAccountResult = await createAuthAccount(email, password);
+test('create an account + check login token + delete account', async () => {
+  const createAccountResult = await createAuthAccount(testEmail, testPassword);
   expect(createAccountResult.success).toBe(true);
 
   if (!createAccountResult.success) throw createAccountResult.error;
@@ -22,7 +22,8 @@ test('create an account + check login token + delete account', async () => {
     createAccountResult.data.token
   );
   expect(
-    checkLoginTokenResult.success && checkLoginTokenResult.data.email === email
+    checkLoginTokenResult.success &&
+      checkLoginTokenResult.data.email === testEmail
   ).toBe(true);
 
   const deleteAccountResult = await deleteAccount(
@@ -32,10 +33,7 @@ test('create an account + check login token + delete account', async () => {
 });
 
 test('create an account + revoke token + check token + signIn + delete account', async () => {
-  const email = 'test@test.com';
-  const password = 'testtest';
-
-  const createAccountResult = await createAuthAccount(email, password);
+  const createAccountResult = await createAuthAccount(testEmail, testPassword);
   expect(createAccountResult.success).toBe(true);
 
   if (!createAccountResult.success) throw createAccountResult.error;
@@ -50,7 +48,10 @@ test('create an account + revoke token + check token + signIn + delete account',
   );
   expect(checkLoginTokenResult.success).toBe(false);
 
-  const signInResult = await signInWithEmailAndPassword(email, password);
+  const signInResult = await signInWithEmailAndPassword(
+    testEmail,
+    testPassword
+  );
   expect(
     signInResult.success &&
       signInResult.data.userId === createAccountResult.data.userId &&
@@ -68,10 +69,7 @@ test('create an account + revoke token + check token + signIn + delete account',
 });
 
 test('create an account + update email and password + signIn + delete', async () => {
-  const email = 'test@test.com';
-  const password = 'testtest';
-
-  const createAccountResult = await createAuthAccount(email, password);
+  const createAccountResult = await createAuthAccount(testEmail, testPassword);
   expect(createAccountResult.success).toBe(true);
 
   if (!createAccountResult.success) throw createAccountResult.error;
@@ -100,8 +98,8 @@ test('create an account + update email and password + signIn + delete', async ()
   ).toBe(true);
 
   const signInPreviousAccountResult = await signInWithEmailAndPassword(
-    email,
-    password
+    testEmail,
+    testPassword
   );
   expect(signInPreviousAccountResult.success).toBe(false);
 
