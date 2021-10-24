@@ -210,6 +210,25 @@ const deleteAccount = async (token: string): Promise<DatabaseResult<null>> => {
   };
 };
 
+const requestResetPassword = async (
+  email: string
+): Promise<DatabaseResult<null>> => {
+  try {
+    const { auth, adminAuth } = getFirebaseReference();
+    await auth.sendPasswordResetEmail(email);
+
+    return {
+      success: true,
+      data: null,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      error: e as Error,
+    };
+  }
+};
+
 export default {
   createAuthAccount,
   checkLoginToken,
@@ -217,4 +236,5 @@ export default {
   signInWithEmailAndPassword,
   updateEmailAndPassword,
   deleteAccount,
+  requestResetPassword,
 };

@@ -1,7 +1,9 @@
+import environmentVariables from '../../config/environmentVariables';
 import {
   checkLoginToken,
   createAuthAccount,
   deleteAccount,
+  requestResetPassword,
   signInWithEmailAndPassword,
   signOutAllAcounts,
   updateEmailAndPassword,
@@ -32,7 +34,7 @@ test('create an account + check login token + delete account', async () => {
   expect(deleteAccountResult.success).toBe(true);
 });
 
-test('create an account + revoke token + check token + signIn + delete account', async () => {
+test('create an account + revoke token + check token + verification email + reset password email + signIn + delete account', async () => {
   const createAccountResult = await createAuthAccount(testEmail, testPassword);
   expect(createAccountResult.success).toBe(true);
 
@@ -59,6 +61,16 @@ test('create an account + revoke token + check token + signIn + delete account',
       signInResult.data.token !== createAccountResult.data.token
   ).toBe(true);
   if (!signInResult.success) throw signInResult.error;
+
+  if (environmentVariables().ENV === 'LOCAL') {
+    await expect(requestResetPassword(testEmail)).rejects.toThrow();
+  } else {
+    const requestResetPasswordResult = await requestResetPassword(testEmail);
+    expect(requestResetPasswordResult).toStrictEqual({
+      success: true,
+      data: null,
+    });
+  }
 
   const deleteAccountResult = await deleteAccount(signInResult.data.token);
   expect(deleteAccountResult.success).toBe(true);

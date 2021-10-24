@@ -82,3 +82,15 @@ export const deleteAccount = async (
     return await onlineAuth.deleteAccount(token);
   }
 };
+
+export const requestResetPassword = async (
+  email: string
+): Promise<DatabaseResult<null>> => {
+  if (environmentVariables().ENV === 'LOCAL') {
+    throw Error(
+      "Can't use request reset password in the local firebase implementation"
+    );
+  } else {
+    return await onlineAuth.requestResetPassword(email);
+  }
+};
