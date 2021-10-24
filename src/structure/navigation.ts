@@ -30,11 +30,11 @@ export default class Navigation {
       }
   > {
     for (let i = 0; i < this.handlers.length; i++) {
-      const session: ClientSession = await mongoose.connection.startSession();
-      session.startTransaction();
-
+      let session: ClientSession | undefined = undefined;
       try {
         const handler: Handler<any> = this.handlers[i];
+        session = await handler.getSession();
+        session.startTransaction();
         const result = await handler.run(context, session);
 
         if (result.databaseSuccess) {
@@ -48,8 +48,10 @@ export default class Navigation {
           return { ...result.result, success: true };
         }
       } catch (e) {
-        await session.abortTransaction();
-        session.endSession();
+        if (session !== undefined) {
+          await session.abortTransaction();
+          session.endSession();
+        }
         return {
           success: false,
           error: e as Error,
