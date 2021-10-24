@@ -1,4 +1,3 @@
-import { Command } from 'commander';
 import dotenv from 'dotenv';
 
 let _initEnv: boolean = false;
@@ -84,15 +83,11 @@ export default function (): EnvirontmentVariables {
  * Function to select what environment we will, the local, beta or prod env.
  */
 function initEnv(): void {
-  const program = new Command();
-
-  program.option('-p, --prod', 'production env');
-  program.option('-b, --beta', 'beta env');
-  program.option('-l, --local', 'local env');
-
-  program.parse(process.argv, { from: 'user' });
-
-  const options = program.opts();
+  const options = {
+    local: process.env.ENV === undefined || process.env.ENV === 'LOCAL',
+    beta: process.env.ENV === 'BETA',
+    prod: process.env.ENV === 'PROD',
+  };
 
   if (options.prod) {
     /**
