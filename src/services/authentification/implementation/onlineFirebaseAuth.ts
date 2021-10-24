@@ -1,5 +1,6 @@
 import firebase from 'firebase';
 import * as admin from 'firebase-admin';
+import axios from 'axios';
 import { DatabaseResult } from '../../../structure/databaseResult';
 import environmentVariables from '../../../config/environmentVariables';
 
@@ -128,17 +129,30 @@ const signOutAllAcounts = async (
 
 const signInWithEmailAndPassword = async (
   email: string,
-  password: string
-): Promise<DatabaseResult<{ token: string; userId: string }>> => {
+  password: string,
+  needVerifiedEmail?: boolean
+): Promise<
+  DatabaseResult<{ token: string; userId: string; emailVerified: boolean }>
+> => {
   const { auth, adminAuth } = getFirebaseReference();
   try {
     const authResponse = await auth.signInWithEmailAndPassword(email, password);
     if (authResponse.user === null) throw Error('Null firebase user id');
+
+    if (
+      needVerifiedEmail !== undefined &&
+      needVerifiedEmail &&
+      !authResponse.user.emailVerified
+    ) {
+      await authResponse.user.sendEmailVerification();
+    }
+
     return {
       success: true,
       data: {
         token: await authResponse.user.getIdToken(),
         userId: authResponse.user.uid,
+        emailVerified: authResponse.user.emailVerified,
       },
     };
   } catch (e) {

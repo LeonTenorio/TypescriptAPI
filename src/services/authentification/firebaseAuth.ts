@@ -41,12 +41,23 @@ export const signOutAllAcounts = async (
 
 export const signInWithEmailAndPassword = async (
   email: string,
-  password: string
-): Promise<DatabaseResult<{ token: string; userId: string }>> => {
+  password: string,
+  needVerifiedEmail?: boolean
+): Promise<
+  DatabaseResult<{ token: string; userId: string; emailVerified: boolean }>
+> => {
   if (environmentVariables().ENV === 'LOCAL') {
-    return await localAuth.signInWithEmailAndPassword(email, password);
+    return await localAuth.signInWithEmailAndPassword(
+      email,
+      password,
+      needVerifiedEmail
+    );
   } else {
-    return await onlineAuth.signInWithEmailAndPassword(email, password);
+    return await onlineAuth.signInWithEmailAndPassword(
+      email,
+      password,
+      needVerifiedEmail
+    );
   }
 };
 

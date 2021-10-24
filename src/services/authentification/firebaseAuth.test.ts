@@ -9,7 +9,7 @@ import {
 
 jest.setTimeout(100000);
 
-const testEmail = 'test@test.com';
+const testEmail = 'leon_lts@hotmail.com';
 const testPassword = 'testtest';
 
 test('create an account + check login token + delete account', async () => {
@@ -50,7 +50,8 @@ test('create an account + revoke token + check token + signIn + delete account',
 
   const signInResult = await signInWithEmailAndPassword(
     testEmail,
-    testPassword
+    testPassword,
+    true
   );
   expect(
     signInResult.success &&

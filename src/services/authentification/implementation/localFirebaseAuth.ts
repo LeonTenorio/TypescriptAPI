@@ -171,8 +171,11 @@ const signOutAllAcounts = async (
 
 const signInWithEmailAndPassword = async (
   email: string,
-  password: string
-): Promise<DatabaseResult<{ token: string; userId: string }>> => {
+  password: string,
+  needVerifiedEmail?: boolean
+): Promise<
+  DatabaseResult<{ token: string; userId: string; emailVerified: boolean }>
+> => {
   try {
     const env = environmentVariables();
     if (env.ENV !== 'LOCAL') throw Error('Wrong usage of local firebase auth');
@@ -214,6 +217,7 @@ const signInWithEmailAndPassword = async (
       data: {
         token: token,
         userId: user.userId,
+        emailVerified: false,
       },
     };
   } catch (e) {
