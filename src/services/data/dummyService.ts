@@ -13,7 +13,7 @@ function castDbData(data: Document): IDummy {
   return castData;
 }
 
-export const addDymmyData = async (
+const addDymmyData = async (
   data: IDummy,
   db: Db,
   session: ClientSession
@@ -29,7 +29,7 @@ export const addDymmyData = async (
   }
 };
 
-export const readDummyDatas = async (
+const readDummyDatas = async (
   db: Db,
   session: ClientSession
 ): Promise<DatabaseResult<Array<IDummy>>> => {
@@ -51,7 +51,7 @@ export const readDummyDatas = async (
   }
 };
 
-export const updateDummyData = async (
+const updateDummyData = async (
   time: Date,
   data: Partial<IDummy>,
   db: Db,
@@ -72,4 +72,10 @@ export const updateDummyData = async (
       error: e as Error,
     };
   }
+};
+
+export default {
+  addDymmyData,
+  readDummyDatas,
+  updateDummyData,
 };
