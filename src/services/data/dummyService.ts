@@ -34,7 +34,10 @@ export const readDummyDatas = async (
   session: ClientSession
 ): Promise<DatabaseResult<Array<IDummy>>> => {
   try {
-    const response = await db.collection(collection).find({}).toArray();
+    const response = await db
+      .collection(collection)
+      .find({}, { session })
+      .toArray();
 
     return {
       success: true,
@@ -55,7 +58,9 @@ export const updateDummyData = async (
   session: ClientSession
 ): Promise<DatabaseResult<null>> => {
   try {
-    await db.collection(collection).findOneAndUpdate({ time: time }, data);
+    await db
+      .collection(collection)
+      .findOneAndUpdate({ time: time }, data, { session });
 
     return {
       success: true,
