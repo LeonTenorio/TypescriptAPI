@@ -1,41 +1,25 @@
-import { ClientSession, model, Schema, Document, Model } from 'mongoose';
+import { ClientSession, Db, Document } from 'mongodb';
 import { DatabaseResult } from '../../structure/databaseResult';
 
 const collection: string = 'Dummy';
-
-const DummySchema = new Schema({
-  message: String,
-  time: Date,
-});
 
 type IDummy = {
   message: string;
   time: Date;
 };
 
-interface IDummyDocument extends IDummy, Document {}
-interface IDummyModel extends Model<IDummyDocument> {}
-
-const DummyModel = model<IDummyModel>(collection, DummySchema, collection);
-
-function castDbData(data: IDummyModel): IDummy {
-  const castData = data as any as IDummyDocument;
-  return {
-    message: castData.message,
-    time: castData.time,
-  };
+function castDbData(data: Document): IDummy {
+  const castData = data as any as IDummy;
+  return castData;
 }
 
 export const addDymmyData = async (
   data: IDummy,
+  db: Db,
   session: ClientSession
 ): Promise<DatabaseResult<null>> => {
   try {
-    const store = new DummyModel(data);
-    const response = await store.save({ session: session });
-    if (response.errors !== undefined) {
-      throw response.errors;
-    }
+    await db.collection(collection).insertOne(data, { session });
     return { success: true, data: null };
   } catch (e) {
     return {
@@ -46,10 +30,11 @@ export const addDymmyData = async (
 };
 
 export const readDummyDatas = async (
+  db: Db,
   session: ClientSession
 ): Promise<DatabaseResult<Array<IDummy>>> => {
   try {
-    const response = await DummyModel.find().session(session);
+    const response = await db.collection(collection).find({}).toArray();
 
     return {
       success: true,
@@ -66,16 +51,11 @@ export const readDummyDatas = async (
 export const updateDummyData = async (
   time: Date,
   data: Partial<IDummy>,
+  db: Db,
   session: ClientSession
 ): Promise<DatabaseResult<null>> => {
   try {
-    const response = await DummyModel.findOneAndUpdate(
-      { time: time },
-      data
-    ).session(session);
-    if (response !== null && response.errors !== undefined) {
-      throw response.errors;
-    }
+    await db.collection(collection).findOneAndUpdate({ time: time }, data);
 
     return {
       success: true,

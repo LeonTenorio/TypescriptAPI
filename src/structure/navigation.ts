@@ -1,6 +1,7 @@
 import { Express, Request, Response } from 'express';
 import { ClientSession, Db } from 'mongodb';
 import { DatabaseService, withDatabaseTransaction } from '../config/database';
+import { authHandler } from '../handlers/auth/authHandler';
 import { checkLoginToken } from '../services/authentification/firebaseAuth';
 import Context from './context';
 import { DatabaseResult } from './databaseResult';
@@ -57,64 +58,5 @@ export const ProtectedNavigation = <T>(
   ) => Promise<DatabaseResult<T | null>>,
   roleFunction?: (profile: T) => boolean
 ) => {
-  return new Navigation([
-    new Handler(async (context: Context): Promise<NavigationResult<null>> => {
-      const authToken = context.getAuthToken();
-      if (authToken === null)
-        return {
-          status: 401,
-          body: {
-            error: 'REQUEST_WITHOUT_TOKEN',
-          },
-        };
-      const authResult = await checkLoginToken(authToken);
-      if (!authResult.success) {
-        return {
-          status: 401,
-          body: {
-            error: 'INVALID_TOKEN',
-          },
-        };
-      }
-
-      const service: DatabaseService<NavigationResult<null>> = async (
-        db,
-        session
-      ) => {
-        const profileResult = await getProfile(
-          authResult.data.userId,
-          authResult.data.email,
-          session,
-          db
-        );
-        if (!profileResult.success) {
-          throw profileResult.error;
-        }
-        if (profileResult.data === null) {
-          return {
-            status: 404,
-            body: {
-              error: 'PROFILE_NOT_FOUND',
-            },
-          };
-        }
-        if (roleFunction !== undefined) {
-          if (!roleFunction(profileResult.data)) {
-            return {
-              status: 403,
-              body: {
-                error: 'NOT_AUTHORIZED',
-              },
-            };
-          }
-        }
-        context.setVariable<T>('profile', profileResult.data);
-
-        return null;
-      };
-
-      return await withDatabaseTransaction(service);
-    }),
-    ...handlers,
-  ]);
+  return new Navigation([authHandler(getProfile, roleFunction), ...handlers]);
 };
