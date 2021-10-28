@@ -33,7 +33,7 @@ export const withDatabaseTransaction = async <T>(
           await client.close();
         }
         resolve(result);
-      });
+      }, transactionOptions);
     } catch (e) {
       console.warn('MONGODB ERROR');
       console.warn(e);
