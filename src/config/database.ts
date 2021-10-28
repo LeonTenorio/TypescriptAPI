@@ -19,34 +19,29 @@ export const withDatabaseTransaction = async <T>(
 
   const transactionOptions = {};
 
-  try {
-    let result: T | undefined = undefined;
-
-    await session.withTransaction(async () => {
-      result = await service(client.db(), session);
-    }, transactionOptions);
-
-    if (result === undefined) {
-      throw Error("Can't execute the service");
-    }
-
-    if (rollback !== undefined && rollback) {
-      await session.abortTransaction();
+  const result = new Promise<T>(async (resolve, reject) => {
+    try {
+      await session.withTransaction(async () => {
+        const result = await service(client.db(), session);
+        if (rollback !== undefined && rollback) {
+          await session.abortTransaction();
+          await session.endSession();
+          await client.close();
+        } else {
+          await session.commitTransaction();
+          await session.endSession();
+          await client.close();
+        }
+        resolve(result);
+      });
+    } catch (e) {
+      console.warn('MONGODB ERROR');
+      console.warn(e);
       await session.endSession();
       await client.close();
-    } else {
-      await session.commitTransaction();
-      await session.endSession();
-      await client.close();
+      reject(e);
     }
+  });
 
-    return result;
-  } catch (e) {
-    console.warn('MONGODB ERROR');
-    console.warn(e);
-    await session.abortTransaction();
-    await session.endSession();
-    await client.close();
-    throw e as Error;
-  }
+  return result;
 };
