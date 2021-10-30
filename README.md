@@ -13,9 +13,10 @@ The Firebase has been used to implement the online login service and the offline
 - `createAuthAccount`: Using the `email` and `password` that service creates an account and if it was a success return the `token` and `userId`;
 - `checkLoginToken`: Using the `token`that service check if it's a valid one and if that is true returns the `userId` and `email` of the user it belongs to;
 - `signOutAllAcounts`: Using the `token` that service check if it's a valid one and if that is true sign out in all accounts of the user who owns the token;
-- `signInWithEmailAndPassword`: Using the `email` and `password` that service try to sign in in an account and if the process was a success return the `token` and `userId`;
+- `signInWithEmailAndPassword`: Using the `email` and `password` that service try to sign in in an account and if the process was a success return the `token` and `userId`. If is necessary to validate the email to continue with the process that service send an email making possible to the user verify your email;
 - `updateEmailAndPassword`: Using the `token`, new `email` and new `password` that service check if that token is a valid one and if it is true change the `email` and `password` of that account to the new values and return the new `token` and the `userId`;
 - `deleteAccount`: Using a `token` of the account, check if it's a valid one and if that is true try to delete the user account.
+- `requestResetPassword`: Using the `email`of the account that service send an request reset password link to the user.
 
 In that project we have 3 different environments, the production env, the beta env and the local env configured like that:
 
