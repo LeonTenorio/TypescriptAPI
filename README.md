@@ -41,9 +41,4 @@ FIREBASE_MEASUREMENT_ID='Firebase measurement id'
 
 The `beta.firebaseServiceAccount.json` or `prod.firebaseServiceAccount.json` is the firebase admin sdk service account and you can download that configuration file in your project accessing the configurations -> service account -> firebase sdk admin -> generate private key for node.js.
 
-To use the local mongodb you need to install the mongodb-server client, to do it you can use that pages:
-
-- [Ubuntu MongoDB usage](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
-- [Fedora MongoDB usage](https://tecadmin.net/install-mongodb-on-fedora/)
-- [Windows MongoDB usage](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
-- [MacOS MongoDB usage](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
+To use the local environment you need to use the mongodb docker configured like a compose inside the [mongo](mongo/docker-compose.yml) (Thanks for the mongo set configuration in https://github.com/UpSync-Dev/docker-compose-mongo-replica-set). So in the first time you need to start the docker configuration running `docker-compose up -d` inside that folder and in the next times you can start the 3 docker sequence from the first to the last, something like that: `sudo systemctl start docker; sudo docker start fd9b9b6ca73e; sudo docker start 4c90e0b82e06; sudo docker start 0502e60a43ec`
