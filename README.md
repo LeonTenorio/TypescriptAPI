@@ -6,7 +6,7 @@ Using that like a base project you need to know that the services is something l
 
 Here I used MONGODB and Firebase to provide my data services.
 
-So far we don't have any real database implementation, but MONGODB has been used to create a session and for each request if the response has a code above 400 the session rollback will be called, otherwise the database changes will be confirmed. And if something goes wrong with the endpoint the rollback will be called because the response will be 5XX or 4XX.
+So far we don't have any real database implementation, but MONGODB has been used to create a session and if all database changes happen successfully, for each place using a service with database transaction the changes will be committed and if not that changes will be rolled back.
 
 The Firebase has been used to implement the online login service and the offline local login service was implemented using jsonwebtoken package. Now we have that functions:
 
@@ -41,4 +41,4 @@ FIREBASE_MEASUREMENT_ID='Firebase measurement id'
 
 The `beta.firebaseServiceAccount.json` or `prod.firebaseServiceAccount.json` is the firebase admin sdk service account and you can download that configuration file in your project accessing the configurations -> service account -> firebase sdk admin -> generate private key for node.js.
 
-To use the local environment you need to use the mongodb docker configured like a compose inside the [mongo](mongo/docker-compose.yml) (Thanks for the mongo set configuration in https://github.com/UpSync-Dev/docker-compose-mongo-replica-set). So in the first time you need to start the docker configuration running `docker-compose up -d` inside that folder and in the next times you can start the 3 docker sequence from the first to the last, something like that: `sudo systemctl start docker; sudo docker start fd9b9b6ca73e; sudo docker start 4c90e0b82e06; sudo docker start 0502e60a43ec`
+To use the local environment you need to use the mongodb docker configured like a compose inside the [localmongo](localmongo/docker-compose.yml) (Thanks for the mongo set configuration in https://github.com/UpSync-Dev/docker-compose-mongo-replica-set). So in the first time you need to start the docker configuration running `docker-compose up -d` inside that folder and in the next times you can start the 3 docker sequence from the first to the last, something like that: `sudo systemctl start docker; sudo docker start fd9b9b6ca73e; sudo docker start 4c90e0b82e06; sudo docker start 0502e60a43ec`
