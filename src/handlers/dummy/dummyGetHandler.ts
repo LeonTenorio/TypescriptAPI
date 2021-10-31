@@ -2,11 +2,7 @@ import {
   DatabaseService,
   withDatabaseTransaction,
 } from '../../config/database';
-import {
-  addDymmyData,
-  readDummyDatas,
-  updateDummyData,
-} from '../../services/data/dummyService';
+import dummyService from '../../services/data/dummyService';
 import Context from '../../structure/context';
 import Handler from '../../structure/handler';
 import { NavigationResult } from '../../structure/navigation';
@@ -20,17 +16,17 @@ export const dummyGetHandler = new Handler(
       db,
       session
     ) => {
-      const addResult = await addDymmyData(data, db, session);
+      const addResult = await dummyService.addDymmyData(data, db, session);
       if (!addResult.success) {
         throw addResult.error;
       }
 
-      const readResult = await readDummyDatas(db, session);
+      const readResult = await dummyService.readDummyDatas(db, session);
       if (!readResult.success) {
         throw readResult.error;
       }
 
-      const updateResult = await updateDummyData(
+      const updateResult = await dummyService.updateDummyData(
         data.time,
         { message: 'updated' },
         db,

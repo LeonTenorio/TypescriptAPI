@@ -6,16 +6,17 @@ Using that like a base project you need to know that the services is something l
 
 Here I used MONGODB and Firebase to provide my data services.
 
-So far we don't have any real database implementation, but MONGODB has been used to create a session and for each request if the response has a code above 400 the session rollback will be called, otherwise the database changes will be confirmed. And if something goes wrong with the endpoint the rollback will be called because the response will be 5XX or 4XX.
+So far we don't have any real database implementation, but MONGODB has been used to create a session and if all database changes happen successfully, for each place using a service with database transaction the changes will be committed and if not that changes will be rolled back.
 
 The Firebase has been used to implement the online login service and the offline local login service was implemented using jsonwebtoken package. Now we have that functions:
 
 - `createAuthAccount`: Using the `email` and `password` that service creates an account and if it was a success return the `token` and `userId`;
 - `checkLoginToken`: Using the `token`that service check if it's a valid one and if that is true returns the `userId` and `email` of the user it belongs to;
 - `signOutAllAcounts`: Using the `token` that service check if it's a valid one and if that is true sign out in all accounts of the user who owns the token;
-- `signInWithEmailAndPassword`: Using the `email` and `password` that service try to sign in in an account and if the process was a success return the `token` and `userId`;
+- `signInWithEmailAndPassword`: Using the `email` and `password` that service try to sign in in an account and if the process was a success return the `token` and `userId`. If is necessary to validate the email to continue with the process that service send an email making possible to the user verify your email;
 - `updateEmailAndPassword`: Using the `token`, new `email` and new `password` that service check if that token is a valid one and if it is true change the `email` and `password` of that account to the new values and return the new `token` and the `userId`;
 - `deleteAccount`: Using a `token` of the account, check if it's a valid one and if that is true try to delete the user account.
+- `requestResetPassword`: Using the `email`of the account that service send an request reset password link to the user.
 
 In that project we have 3 different environments, the production env, the beta env and the local env configured like that:
 
@@ -41,9 +42,4 @@ FIREBASE_MEASUREMENT_ID='Firebase measurement id'
 
 The `beta.firebaseServiceAccount.json` or `prod.firebaseServiceAccount.json` is the firebase admin sdk service account and you can download that configuration file in your project accessing the configurations -> service account -> firebase sdk admin -> generate private key for node.js.
 
-To use the local mongodb you need to install the mongodb-server client, to do it you can use that pages:
-
-- [Ubuntu MongoDB usage](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/)
-- [Fedora MongoDB usage](https://tecadmin.net/install-mongodb-on-fedora/)
-- [Windows MongoDB usage](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
-- [MacOS MongoDB usage](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
+To use the local environment you need to use the mongodb docker configured like a compose inside the [localmongo](localmongo/docker-compose.yml) (Thanks for the mongo set configuration in https://github.com/UpSync-Dev/docker-compose-mongo-replica-set). So in the first time you need to start the docker configuration running `docker-compose up -d` inside that folder and in the next times you can start the 3 docker sequence from the first to the last, something like that: `sudo systemctl start docker; sudo docker start fd9b9b6ca73e; sudo docker start 4c90e0b82e06; sudo docker start 0502e60a43ec`
